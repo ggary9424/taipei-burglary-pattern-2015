@@ -1,0 +1,46 @@
+<style>
+body {
+  background-color: '#DCDCDC';
+}
+
+.center{
+	margin-top: 180px;
+	margin-left: 36%; 
+	width: 350px;
+}
+
+p{ 
+	color: #4c4a37; 
+	font-family: 'Source Sans Pro', sans-serif; 
+	font-size: 18px; 
+	line-height: 32px; 
+	margin: 0 0 24px; 
+}
+
+.container {
+  position: relative;
+  margin-left: 27%; 
+}
+
+.ghost {
+  animation: float 3s ease-out infinite;
+}
+
+@keyframes float {
+  50% {
+     transform: translate(0, 20px);
+  }
+}
+.shadowFrame {
+  width: 130px;
+  margin-top: 15px;
+}
+.shadow {
+  animation: shrink 3s ease-out infinite;
+  transform-origin: center center;
+  ellipse {
+    transform-origin: center center;
+  }
+}
+
+</style>

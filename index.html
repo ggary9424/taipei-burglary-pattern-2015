@@ -1,0 +1,308 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<script src="https://code.jquery.com/jquery-2.1.4.js"></script>
+	<script src="http://app.essoduke.org/js/tinyMap/jquery.tinyMap-3.3.11.js"></script>
+	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=drawing"></script> 
+	<script src="/jquery.csv/jquery.csv-0.71.js"></script>
+	<meta charset="utf-8">
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<link rel="stylesheet" type="text/css" href="css/note_style.css">
+	<link rel="icon" type="image/png" href="Img/page_icon.png">
+	<title>2015台北市竊盜地圖</title>
+	
+	<script type="text/javascript">
+	var strUrl = location.search;
+	var para, ParaVal;
+	var getPara = {};
+
+	if (strUrl.indexOf("?") != -1) {
+		var getSearch = strUrl.split("?");
+		para = getSearch[1].split("&");
+	for (i = 0; i < para.length; i++) {
+		ParaVal = para[i].split("=");
+		getPara[ParaVal[0]] = ParaVal[1];
+	}
+
+	}
+	</script>
+
+</head>
+
+<body>
+<img src="Img/body_background.png" style='position:fixed;top:0px;left:0px;width:100%;height:100%;z-index:-1;'>
+	<header>  
+		<h1 style="padding-left: 20px">
+			2015台北市竊盜地圖
+		</h1>
+	</header>
+
+<div class="map"></div>
+<div id="right_box">
+	<div id='cssmenu'>
+	<ul>
+	   <li class='active' id='li_time'><a href='#' onClick="timeClick()">Time</a></li>
+	   <li id='li_pattern'><a href='#' onClick="patternClick(1,1)">Pattern</a></li>
+	   <li id='li_about'><a href='#' onClick="aboutClick()">About</a></li>
+	</ul>
+	</div>
+	<div id="right_box_down">
+		<select id="time_selector" onchange="selectChange()">
+			<option value = "day"> Day </option>
+			<option value = "month"> Month </option>
+			<option value = "year"> Year </option>
+		</select>
+		<div id="select_inner">
+			<input type="text" class="input" id="input_month" placeholder="請輸入月" value="1">月 
+			<input type="text" class="input" id="input_day" placeholder="請輸入日" value="1">日
+			<input type="submit" class="myButton" value="Submit" onclick="dateClick()">
+		</div>		
+	</div>
+</div>
+
+<div id = 'pattern'>
+	<div class="notepad">
+		<div class="notepad-heading">
+		<h1>Introduction</h1>
+		</div>
+		<blockquote>
+			<font size="4" style="font-weight: bold;">Time:</font><br>
+			<font size="3" style="margin-left: 30px;">Day:顯示某日的犯罪地點</font><br>
+			<font size="3" style="margin-left: 30px;">Month:顯示某月份的犯罪地點</font><br>
+			<font size="3" style="margin-left: 30px;">Year:顯示一整年的犯罪地點</font><br>
+			<font size="4" style="font-weight: bold;">Pattern:</font><br>
+			<font size="3" style="margin-left: 30px;">Pattern中的竊盜案件，兩兩事件距離小於"R"公尺，且整個Pattern的經歷時間在某天數內 (以近似圓形呈現)</font><br>
+			<font size="3" color="#FA8072" style="margin-left: 30px;">(點擊地圖上座標可查看竊盜類型)</font>
+		</blockquote>
+	</div>
+</div>
+
+<script>
+	mapInitial();
+	var date = {};
+	var month = {'1':[],'2':[],'3':[],'4':[],'5':[],'6':[],'7':[],'8':[],'9':[],'10':[],'11':[],'12':[]};
+	var year = [];
+	$.ajax({
+		url: "TaipeiBurglary2015_01_10.csv",
+		async: false,
+		success: function (csvd) {
+			data = $.csv.toArrays(csvd);
+		},
+		dataType: "text",
+		complete: function () {
+			for(var i=0; i<data.length-1; i++){
+				var d = new Date(data[i+1][2]);
+				if(!(""+(d.getMonth()+1)+"-"+d.getDate() in date)){
+					date[""+(d.getMonth()+1)+"-"+d.getDate()] = [];
+				}
+				date[""+(d.getMonth()+1)+"-"+d.getDate()].push({'addr':[data[i+1][3],data[i+1][4]], 'text': "犯罪類型: " + data[i+1][1] + "<br>時間: " + data[i+1][2]});
+				month[""+(d.getMonth()+1)].push({'addr':[data[i+1][3],data[i+1][4]], 'text': "犯罪類型: " + data[i+1][1] + "<br>時間: " + data[i+1][2]});
+				year.push({'addr':[data[i+1][3],data[i+1][4]], 'text': "犯罪類型: " + data[i+1][1] + "<br>時間: " + data[i+1][2]});
+			}
+			if(!(('R' in getPara) && ('T' in getPara))){
+				var map = $(".map");
+					map.tinyMap('clear');
+					map.tinyMap('modify', {
+						'marker':date[$("#input_month").val()+"-"+$("#input_day").val()],
+				});
+			}
+		}
+	});
+	
+	function mapInitial(){
+		var map = $(".map");
+		map.tinyMap({
+			'center':{'lat': '25.05', 'lng': '121.565'},
+			'zoom'  : 12,
+		});
+		
+	}
+
+	function GetAddress(lat,lng){
+		var geocoder = new google.maps.Geocoder();
+		var latlng = {lat: parseFloat(lat), lng: parseFloat(lng)};
+
+		geocoder.geocode({
+		  'latLng': latlng
+		}, function(results, status) {
+			if (status === google.maps.GeocoderStatus.OK) {
+				if (results) {
+					var addr = results[0].formatted_address;
+					return addr;
+				}
+			} else {
+				//alert("Reverse Geocoding failed because: " + status);
+				return "unknown"
+			}
+		});
+	}
+</script>
+<script type="text/javascript" src="changePatternDiv.js"></script>
+<script>
+var pattern = [];
+function getPattern(file){
+	$.ajax({
+		url: file,
+		async: false,
+		success: function (csvd) {
+			result = $.csv.toArrays(csvd);
+		},
+		dataType: "text",
+		complete: function () {
+			var col = 0;
+			var array = [];
+			while(col < result.length){
+				if(result[col][0] == ""){
+					if(col != 0){
+						pattern.push(array);
+					}
+					array = [];
+				}
+				else{
+					array.push(result[col]);
+				}
+				col++;
+			}
+			pattern.push(array);
+
+			if(('R' in getPara) && ('T' in getPara)){
+				patternClick(getPara['T'], getPara['R']);
+			}
+
+		}
+	});
+}
+
+if(('R' in getPara) && ('T' in getPara)){
+	getPattern("result.csv");
+}
+else{
+	getPattern("pre_result.csv");
+}
+</script>
+<script>
+function selectChange(){
+	var x = document.getElementById("time_selector").value;
+	var map = $(".map");
+	if(x == 'day'){
+		document.getElementById("select_inner").innerHTML = 
+			'<input type="text" class="input" id="input_month" placeholder="請輸入月" value="1"> 月'+ 
+			'<input type="text" class="input" id="input_day" placeholder="請輸入日" value="1"> 日'+
+			'<input type="submit" class="myButton" value="Submit" onclick="dateClick()">';
+		var map = $(".map");
+		map.tinyMap('clear');
+		map.tinyMap('modify', {
+			'marker':date['1-1'],
+		});
+	}
+	else if(x == 'month'){
+		document.getElementById("select_inner").innerHTML =
+			'<select id="month_selector" onchange="selectMonthChange()">'+
+			'<option value = "1"> 1 </option>'+
+			'<option value = "2"> 2 </option>'+
+			'<option value = "3"> 3 </option>'+
+			'<option value = "4"> 4 </option>'+
+			'<option value = "5"> 5 </option>'+
+			'<option value = "6"> 6 </option>'+
+			'<option value = "7"> 7 </option>'+
+			'<option value = "8"> 8 </option>'+
+			'<option value = "9"> 9 </option>'+
+			'<option value = "10"> 10 </option>'+
+			'<option value = "11"> 11 </option>'+
+			'<option value = "12"> 12 </option>'+
+			'</select>';
+		map.tinyMap('clear');
+		map.tinyMap('modify', {
+			'marker':month['1'],
+		});
+	}
+	else if(x == 'year'){
+		document.getElementById("select_inner").innerHTML = '';
+		map.tinyMap('clear');
+		map.tinyMap('modify', {
+			'marker':year,
+		});
+	}
+}
+
+function dateClick(){
+	var m = $("#input_month").val();
+	var d = $("#input_day").val();
+	var r = /^[0-9]*[1-9][0-9]*$/　　//正整數    
+	var alert_str = "";
+	var isRetrun = false;
+	if(m > 12 || m < 1 || !r.test(m)){
+		alert_str = '月份請輸入1~12間的正整數';
+		isRetrun = true;
+	}
+	if(d > 31 || m < 1 || !r.test(d)){
+		if(isRetrun){
+			alert_str += '\n';
+		}
+		alert_str += '日期請輸入1~31間的正整數';
+		isRetrun = true;
+	}
+	if(isRetrun){
+		alert(alert_str);
+		return;
+	}
+	var map = $(".map");
+	map.tinyMap('clear');
+	map.tinyMap('modify', {
+		'marker':date[m+"-"+d],
+	});
+}
+
+function selectMonthChange(){
+	var x = document.getElementById("month_selector").value;
+	var map = $(".map");
+	map.tinyMap('clear');
+	map.tinyMap('modify', {
+		'marker':month[x],
+	});
+}
+
+function timeClick(){
+	if($("#li_time").attr("class") == "active"){
+		return;
+	}
+	var map = $(".map");
+	map.tinyMap('clear');
+	map.tinyMap('panTo',['25.05', '121.565']);
+	map.tinyMap('modify', {
+		'marker':date["1-1"],
+	});
+	document.getElementById("pattern").innerHTML = 
+		'<div class="notepad">'+
+		'	<div class="notepad-heading">'+
+		'	<h1>Introduction</h1>'+
+		'	</div>'+
+		'	<blockquote>'+
+		'		<font size="4" style="font-weight: bold;">Time:</font><br>'+
+		'		<font size="3" style="margin-left: 30px;">Day:顯示某日的犯罪地點</font><br>'+
+		'		<font size="3" style="margin-left: 30px;">Month:顯示某月份的犯罪地點</font><br>'+
+		'		<font size="3" style="margin-left: 30px;">Year:顯示一整年的犯罪地點</font><br>'+
+		'		<font size="4" style="font-weight: bold;">Pattern:</font><br>'+
+		'		<font size="3" style="margin-left: 30px;">Pattern中的竊盜案件，兩兩事件距離小於"R"公尺，且整個Pattern的經歷時間在某天數內 (以近似圓形呈現)</font><br>'+
+		'		<font size="3" color="#FA8072" style="margin-left: 30px;">(點擊地圖上座標可查看竊盜類型)</font>'+
+		'	</blockquote>'+
+		'</div>';
+	document.getElementById("li_time").setAttribute("class","active");
+	document.getElementById("li_pattern").setAttribute("class","");
+	document.getElementById("li_about").setAttribute("class","");
+	document.getElementById("right_box_down").innerHTML =
+		'<select id="time_selector" onchange="selectChange()">'+
+		'	<option value = "day"> Day </option>'+
+		'	<option value = "month"> Month </option>'+
+		'	<option value = "year"> Year </option>'+
+		'</select>'+
+		'<div id="select_inner">'+
+		'	<input type="text" class="input" id="input_month" placeholder="請輸入月" value="1"> 月'+ 
+		'	<input type="text" class="input" id="input_day" placeholder="請輸入日" value="1">日'+
+		'	<input type="submit" class="myButton" value="Submit" onclick="dateClick()">'+
+		'</div>';
+}
+</script>
+
+</body>
+</html>
