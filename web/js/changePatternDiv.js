@@ -64,7 +64,7 @@ function parent_submitClick(){
 		alert(alert_str);
 		return;
 	}
-	window.location = "test?T="+t+"&R="+r;
+	window.location = "index?T="+t+"&R="+r;
 }
 
 function pattern_numClick(num){

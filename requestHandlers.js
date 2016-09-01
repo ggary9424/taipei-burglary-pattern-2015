@@ -1,16 +1,16 @@
 var exec = require("child_process").exec;
-	fs = require('fs');
+var	fs = require('fs');
 
-function test(response) {
+function index(response) {
 	console.log("test: function");
-	fs.readFile('./index.html', function (err, html) {
+	fs.readFile('web/html/index.html', function(err, html) {
 		if (err) {
 			response.writeHead(200, {'Content-Type': 'text/css'});
-			response.write('test 404 NOT FOUND');
+			response.write('404 NOT FOUND');
 			response.end();
 			throw err; 
 		}
-		else{
+		else {
 			response.writeHeader(200, {"Content-Type": "text/html"});
 			response.write(html);
 			response.end();
@@ -18,16 +18,16 @@ function test(response) {
 	});
 }
 
-function loading(response){
+function loading(response) {
 	console.log("loading");
-	fs.readFile('./loading.html', function (err, html) {
-        if(err){
+	fs.readFile('web/html/loading.html', function(err, html) {
+        if (err) {
 			response.writeHead(200, {'Content-Type': 'text/css'});
-			response.write('other 404 NOT FOUND');
+			response.write('404 NOT FOUND');
 			response.end();
 			return false;
 		}
-		else{			
+		else {			
 			response.writeHead(200, {'Content-Type': 'text/html'});
 			response.write(html);
 			return true;
@@ -37,15 +37,14 @@ function loading(response){
 
 function other(response, pathname) {
 	console.log("other: "+pathname);
-	fs.readFile('.'+pathname, function (err, data) {
-        if(err){
+	fs.readFile('.'+pathname, function(err, data) {
+        if (err) {
 			response.writeHead(200, {'Content-Type': 'text/css'});
-			response.write('other 404 NOT FOUND');
+			response.write('404 NOT FOUND');
 			response.end();
 			return false;
 		}
-		else{			
-			//response.writeHead(200, {'Content-Type': 'text/css'});
+		else {			
 			response.write(data);
 			response.end();
 			return true;
@@ -53,6 +52,6 @@ function other(response, pathname) {
 	});
 }
 
-exports.test = test;
+exports.index = index;
 exports.loading = loading;
 exports.other = other;
