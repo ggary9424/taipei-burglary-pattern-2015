@@ -1,11 +1,25 @@
-# Taipei_thefts_pattern_2015
-2015台北市竊盜地圖
+# Taipei-burglary-Pattern-2015
 
-此專案為台北市竊盜事件的視覺化
+Overview
+--------
+The package is a data visualization website for burglary events in Taipei County, Taiwan.
 
-作品網址:
-http://140.116.245.134:8888/test
+A Pattern means pairwise burglary events within an area which distance is not more than R
+ km and time span is not more N days.
 
-Pattern意即:
+Requirements
+--------
+You will need to install [Apache Spark](http://spark.apache.org/downloads.html) and 
+[Node.js](https://nodejs.org/en/) first.
 
-兩兩竊盜案件距離小於"R"公尺，且總經歷時間在某天數內，符合其條件的為一個Pattern
+Usage
+--------
+Run:
+```bash
+nodejs index.js
+```
+Open the browser and connect to "127.0.0.1:8000".
+
+Close:
+
+Key ctrl+c in the terminal.
