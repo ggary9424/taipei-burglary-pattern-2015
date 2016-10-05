@@ -12,10 +12,12 @@
 		'	<input name=R type="text" class="input" id="input_R" placeholder="請輸入半徑" value="'+r+'">公里內(可小數)'+
 		'	<input type="submit" class="myButton" value="Submit" onclick="parent_submitClick()">'+
 		'</div>'+
+		'<div id="list_explation">'+
 		'<br>'+
-		'<font size="3" color="#CD853F"style="margin-left: 15px;">*2 Thefts Pattern 意即Pattern發生竊盜案件數有2起的清單'+'</font>'+
+		'<font size="3" color=#CD853F>[2 Thefts Pattern`] 意即 Pattern 發生竊盜案件數有 2 起的清單</font>'+
 		'<br>'+
-		'<font size="3" color="#CD853F"style="margin-left: 20px;">座標數如不符合則代表某座標點有多起案件'+'</font>';
+		'<font size="3" color=#CD853F>座標數如不符合則代表某座標點有多起案件</font>'+
+		'</div>';
 	var html_pattern_num ='';
 	for(var i=0; i<pattern.length; i++){
 		if(i == 0){
@@ -150,11 +152,13 @@ function aboutClick(){
 	document.getElementById("li_time").setAttribute("class","");
 	document.getElementById("li_pattern").setAttribute("class","");
 	document.getElementById("li_about").setAttribute("class","active");
-	document.getElementById("right_box_down").innerHTML = 
-		'<font size="5" color="#FF6A6A" style="margin-left: 30px; font-weight: 600;">使用技術:</font><br>'+
-		'<font size="4" color="#FF6A6A" style="margin-left: 80px; font-weight: 500;">1.Node.js後端</font><br>'+
-		'<font size="4" color="#FF6A6A" style="margin-left: 80px; font-weight: 500;">2.運用分散式Spark計算Pattern</font><br>'+
-		'<font size="4" color="#FF6A6A" style="margin-left: 80px; font-weight: 500;">3.Data visualization</font><br>'+
-		'<font size="4" color="#1E90FF" style="margin-left: 30px; font-weight: 500;">(資料來源:台北市政府開放資料)</font>';
+	document.getElementById("right_box_down").innerHTML =
+	    '<div id="div-about">'+
+		'	<font size="5" color="#FF6A6A" style="margin-left: 10px; font-weight: 600;">使用技術:</font><br>'+
+		'	<font size="4" color="#FF6A6A" style="margin-left: 60px; font-weight: 500;">1.Node.js後端</font><br>'+
+		'	<font size="4" color="#FF6A6A" style="margin-left: 60px; font-weight: 500;">2.運用分散式Spark計算Pattern</font><br>'+
+		'	<font size="4" color="#FF6A6A" style="margin-left: 60px; font-weight: 500;">3.Data visualization</font><br>'+
+		'	<font size="4" color="#1E90FF" style="margin-left: 10px; font-weight: 500;">(資料來源:台北市政府開放資料)</font>'+
+		'</div>';
 	document.getElementById("pattern").innerHTML = "";
 }
