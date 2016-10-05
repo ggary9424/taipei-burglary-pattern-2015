@@ -1,4 +1,12 @@
-﻿function patternClick(t,r){
+﻿function patternClick(){
+	var t = getParameterByName('T');
+	var r = getParameterByName('R');
+	if (t == null) {
+		t = 1;
+	}
+	if (r == null ){
+		r = 1;
+	}
 	if($("#li_pattern").attr("class") == "active"){
 		return;
 	}
@@ -42,6 +50,16 @@
 		'</div>';
 		
 	pattern_list(2);
+}
+
+function getParameterByName(name, url) {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 
 function parent_submitClick(){

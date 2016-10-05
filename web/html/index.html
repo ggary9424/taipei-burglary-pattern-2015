@@ -42,7 +42,7 @@
 	<div id='cssmenu'>
 	<ul>
 	   <li class='active' id='li_time'><a href='#' onClick="timeClick()">Time</a></li>
-	   <li id='li_pattern'><a href='#' onClick="patternClick(1,1)">Pattern</a></li>
+	   <li id='li_pattern'><a href='#' onClick="patternClick()">Pattern</a></li>
 	   <li id='li_about'><a href='#' onClick="aboutClick()">About</a></li>
 	</ul>
 	</div>
@@ -166,7 +166,7 @@ function getPattern(file){
 			pattern.push(array);
 
 			if(('R' in getPara) && ('T' in getPara)){
-				patternClick(getPara['T'], getPara['R']);
+				patternClick();
 			}
 
 		}
